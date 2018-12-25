@@ -2,24 +2,25 @@
 <html lang="zh-CN">
 <head>
     <meta charset="utf-8">
-
+    
     <meta http-equiv="x-ua-compatible" content="IE=edge"/>
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
-
+    
     <meta name="author" content="mack xu">
-
-
+    
+    
     <meta name="description" content="知识管理，时间管理">
-
-
+    
+    
     <title>
-
+        
         Vue打包输出路径问题 |
-
+        
         起今知行 | 思考者</title>
-
+    
     <link rel="stylesheet" href="/stylesheets/style.min.css">
+    
 </head>
 <body>
 
@@ -30,64 +31,71 @@
         <div id="sidebar-inner-wrap">
             <nav id="site-nav">
                 <ul class="list-unstyled">
-
-
+                    
+                    
                     <li><a href="/">首页</a></li>
-
-
-
+                    
+                    
+                    
                     <li><a href="/archives">文章</a></li>
-
-
-
+                    
+                    
+                    
                     <li><a href="/tags">标签</a></li>
-
-
-
+                    
+                    
+                    
                     <li><a href="/about">关于</a></li>
-
-
+                    
+                    
                 </ul>
             </nav>
             <div id="site-intro">
                 <p>
-
+                    
                     GEEKWEN
-
-
+                    
+                    
                     <small>.com</small>
-
+                    
                 </p>
-
+                
                 <p>自我管理，知识管理，时间管理</p>
-
+                
             </div>
         </div>
 
-
+        
         <a href="https://unsplash.com" target="_blank" id="image-source" class="align-left hidden-xs"
            data-content="Photo from unsplash.com">i</a>
-
+        
     </div>
 </aside>
 
 <main id="main-container">
     <div id="main-inner-wrap">
         <div id="page-content">
-
+            
 
             <article id="article-post" class="post">
     <div class="post-inner-wrap">
-
+        
         <h1 id="page-title">Vue打包输出路径问题</h1>
 
         <ul class="post-meta list-inline">
             <li>时间：<time>2018-12-25</time></li>
-
+            
         </ul>
-
+        
 
         <div class="content">
+            <!-- ![avatar](http://a.hiphotos.baidu.com/image/pic/item/5ab5c9ea15ce36d3bdfb529637f33a87e850b19d.jpg) -->
+<h2 id="vue项目完成打包上线的时候很多人都会碰到静态资源找不到的问题，常见的有两个"><a href="#vue项目完成打包上线的时候很多人都会碰到静态资源找不到的问题，常见的有两个" class="headerlink" title="vue项目完成打包上线的时候很多人都会碰到静态资源找不到的问题，常见的有两个"></a>vue项目完成打包上线的时候很多人都会碰到静态资源找不到的问题，常见的有两个</h2><h4 id="1-js，css路径不对"><a href="#1-js，css路径不对" class="headerlink" title="1. js，css路径不对"></a>1. js，css路径不对</h4><p> 　　解决办法：打开config/index.js，将其中的assetsPublicPath值改为’./‘<br> <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">build: &#123;</div><div class="line">  index: path.resolve(__dirname, <span class="string">'../dist/index.html'</span>),</div><div class="line">  assetsRoot: path.resolve(__dirname, <span class="string">'../dist'</span>),</div><div class="line">  assetsSubDirectory: <span class="string">'static'</span>,</div><div class="line">  assetsPublicPath: <span class="string">'./'</span>,</div><div class="line"> &#125;</div></pre></td></tr></table></figure></p>
+<h4 id="2-css中引用的图片资源找不到"><a href="#2-css中引用的图片资源找不到" class="headerlink" title="2. css中引用的图片资源找不到"></a>2. css中引用的图片资源找不到</h4><p>我的login.vue文件中有一段css，其中引用了一个背景图片，是这样写的生成的路径是这样的<br> <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">../static/img/loginbg<span class="number">.4</span>ac052a.jpg</div></pre></td></tr></table></figure></p>
+<p>“src/assets/”文件夹下有这张图片，打包后路径发生变化这个图片就找不到了，stackflow上有一个解决办法，很简单</p>
+<p>打开“build/utils.js”，增加一行代码即可<br> <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (options.extract) &#123;</div><div class="line">  <span class="keyword">return</span> ExtractTextPlugin.extract(&#123;</div><div class="line">    use: loaders,</div><div class="line">    fallback: <span class="string">'vue-style-loader'</span>,</div><div class="line">    publicPath:<span class="string">'../../'</span>   </div><div class="line">  &#125;)</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">  <span class="keyword">return</span> [<span class="string">'vue-style-loader'</span>].concat(loaders)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="重点是这句代码-publicPath-’-‘"><a href="#重点是这句代码-publicPath-’-‘" class="headerlink" title="重点是这句代码  publicPath:’../../‘"></a>重点是这句代码  publicPath:’../../‘</h4><p>至此问题解决</p>
+
         </div>
     </div>
 </article>
@@ -95,12 +103,12 @@
 <nav id="article-nav">
     <ul class="list-unstyled">
         <li>
-
+            
         </li>
         <li>
-
+            
             <a href="/2017/02/14/hello/" class="next" data-title="hello"></a>
-
+            
         </li>
     </ul>
 </nav>
@@ -115,9 +123,9 @@
                 <a href="/atom.xml">RSS</a>
             </p>
 
-
+            
             <p>Since 2017</p>
-
+            
         </footer>
     </div>
 </main>
