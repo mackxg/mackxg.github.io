@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    
+    <meta http-equiv="x-ua-compatible" content="IE=edge"/>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    
+    <meta name="author" content="mack xu">
+    
+    
+    <meta name="description" content="知识管理，时间管理">
+    
+    
+    <title>
+        
+        异步or同步 |
+        
+        起今知行 | 思考者</title>
+    
+    <link rel="stylesheet" href="/stylesheets/style.min.css">
+    
+</head>
+<body>
+
+<span id="top"> </span>
+
+<aside id="sidebar" >
+    <div id="sidebar-overlay">
+        <div id="sidebar-inner-wrap">
+            <nav id="site-nav">
+                <ul class="list-unstyled">
+                    
+                    
+                    <li><a href="/">首页</a></li>
+                    
+                    
+                    
+                    <li><a href="/archives">文章</a></li>
+                    
+                    
+                    
+                    <li><a href="/tags">标签</a></li>
+                    
+                    
+                    
+                    <li><a href="/about">关于</a></li>
+                    
+                    
+                </ul>
+            </nav>
+            <div id="site-intro">
+                <p>
+                    
+                    GEEKWEN
+                    
+                    
+                    <small>.com</small>
+                    
+                </p>
+                
+                <p>自我管理，知识管理，时间管理</p>
+                
+            </div>
+        </div>
+
+        
+        <a href="https://unsplash.com" target="_blank" id="image-source" class="align-left hidden-xs"
+           data-content="Photo from unsplash.com">i</a>
+        
+    </div>
+</aside>
+
+<main id="main-container">
+    <div id="main-inner-wrap">
+        <div id="page-content">
+            
+
+            <article id="article-post" class="post">
+    <div class="post-inner-wrap">
+        
+        <h1 id="page-title">异步or同步</h1>
+
+        <ul class="post-meta list-inline">
+            <li>时间：<time>2018-12-28</time></li>
+            
+        </ul>
+        
+
+        <div class="content">
+            <h3 id="很多人有的时候都会对异步和同步有误解，同步就是许多人一起来做一件事，异步就是这些人做不同的是"><a href="#很多人有的时候都会对异步和同步有误解，同步就是许多人一起来做一件事，异步就是这些人做不同的是" class="headerlink" title="很多人有的时候都会对异步和同步有误解，同步就是许多人一起来做一件事，异步就是这些人做不同的是"></a>很多人有的时候都会对异步和同步有误解，同步就是许多人一起来做一件事，异步就是这些人做不同的是</h3><p>其实javascript里面的异步和同步都是在做一件事(单线程),只不过是做事的方式不同:同步 -&gt; 就是按照流程步骤一步一步的执行下去,直到整个事情做完为止.  异步 -&gt; 先把简单的不耗费时间精力的步骤执行完,在回来执行那些耗费时间和精力的步骤,最后完成整个事情.</p>
+<p>javascript最简单的异步就是两个定时器 setTimeout 和 setInterval 函数,它们可以控制js的执行顺序,也可以理解为:可以改变程序正常执行顺序的操作就可以看成是异步操作.</p>
+ <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&lt;script&gt;</div><div class="line">  console.log('a')</div><div class="line">  setTimeout(function()&#123;</div><div class="line">    console.log('b')</div><div class="line">  &#125;,0)</div><div class="line">  setTimeout(function()&#123;</div><div class="line">    console.log('c')</div><div class="line">  &#125;,0)</div><div class="line">  console.log('d')</div><div class="line">&lt;/script&gt;</div></pre></td></tr></table></figure>
+<p>你会看到输出没有按照原来的 a - b - c - d , 而是 a - d - b - c , 可见定时器设置了0没有时间耗时,结果其中的function还是最后执行</p>
+<p>有官方是这样解释的：尽管setTimeout的time延迟时间是0，其中的function也会放入一个队列中，等待下一个机会执行，当前的代码(只需要加入队列中的程序)必须在该队列程序完成之前完成，因此结果可能不与预期结果相同</p>
+<p>这里说到了一个“队列”（即任务队列），该队列放的是什么呢，放的就是setTimeout中的function，这些function依次加入该队列，即该队列中所有function中的程序将会在该队列以外的所有代码执行完毕之后再以此执行，这是为什么呢？因为在执行程序的时候，浏览器会默认setTimeout以及ajax请求这一类的方法都是耗时程序（尽管可能不耗时），将其加入一个队列中，该队列是一个存储耗时程序的队列，在所有不耗时程序执行过后，再来依次执行该队列中的程序。</p>
+<p>javascript是单线程的，就意味着任务都是需要按部就班计划的进行(排队),前面的任务没有完成,后面的就进行不下去，于是就有了—任务队列.如果排队是因为计算量大，CPU忙不过来，倒也算了，但是很多时候CPU是闲着的，因为IO设备（输入输出设备）很慢（比如Ajax操作从网络读取数据），不得不等着结果出来，再往下执行。于是JavaScript语言的设计者意识到，这时主线程完全可以不管IO设备，挂起处于等待中的任务，先运行排在后面的任务。等到IO设备返回了结果，再回过头，把挂起的任务继续执行下去。</p>
+<p>于是,所有任务可以分为两种，<br>    1.同步任务：在主线程上排队执行的任务，只有前一个任务执行完毕，才能执行后面一个任务<br>    2.异步任务：不进入主线程，而进入’任务队列’的任务，只有等主线程任务执行完毕，’任务队列’才开始通知主线程，请求执行任务，该任务才会进入主线程执行.<br>异步运行机制如下：<br>    一. 所有同步任务都在主线程上执行，行程一个’执行栈’’<br>    二. 主线程之外，还存在一个’任务队列’，只要异步任务有了运行结果，就在’任务队列’之中放置一个事件<br>    三. 一旦’执行栈’中的所有的同步任务完毕，系统就会读取’任务队列’，看看里面有哪些事件，那些对应的异步任务，于是结束等待状态，进入执行栈，开始执行<br>    四。 主线程不断重复上面的第三步</p>
+<pre><code>只要主线程空了，就会去读取&quot;任务队列&quot;，这就是JavaScript的运行机制。这个过程会不断重复。  
+
+&quot;任务队列&quot;是一个事件的队列（也可以理解成消息的队列），IO设备完成一项任务，就在&quot;任务队列&quot;中添加一个事件，表示相关的异步任务可以进入&quot;执行栈&quot;了。主线程读取&quot;任务队列&quot;，就是读取里面有哪些事件。
+&quot;任务队列&quot;中的事件，除了IO设备的事件以外，还包括一些用户产生的事件（比如鼠标点击、页面滚动等等），比如$(selectot).click(function)，这些都是相对耗时的操作。只要指定过这些事件的回调函数，这些事件发生时就会进入&quot;任务队列&quot;，等待主线程读取。
+所谓&quot;回调函数&quot;（callback），就是那些会被主线程挂起来的代码，前面说的点击事件
+$(selectot).click(function)中的function就是一个回调函数。异步任务必须指定回调函数，当主线程开始执行异步任务，就是执行对应的回调函数。例如ajax的success，complete，error也都指定了各自的回调函数，这些函数就会加入“任务队列”中，等待执行。
+</code></pre>
+        </div>
+    </div>
+</article>
+
+<nav id="article-nav">
+    <ul class="list-unstyled">
+        <li>
+            
+        </li>
+        <li>
+            
+            <a href="/2018/12/25/Vue打包路径问题/" class="next" data-title="Vue打包输出路径问题"></a>
+            
+        </li>
+    </ul>
+</nav>
+
+
+        </div>
+        <footer id="mastfoot">
+            <p>
+                Powered by <a href="http://www.hexo.io" target="_blank">Hexo</a> |
+                <a href="https://github.com/geekwen/hexo-theme" target="_blank">Theme</a> by
+                <a href="http://geekwen.com">Geekwen</a> |
+                <a href="/atom.xml">RSS</a>
+            </p>
+
+            
+            <p>Since 2017</p>
+            
+        </footer>
+    </div>
+</main>
+
+<script>
+    var sidebar = document.getElementById('sidebar');
+    if (!sidebar.getAttribute('style')) {
+        sidebar.setAttribute('style', 'background-image: url(/images/sidebar-bg/' + Math.floor(Math.random() * parseInt('16')) + '.jpg)');
+    }
+</script>
+
+</body>
+</html>
